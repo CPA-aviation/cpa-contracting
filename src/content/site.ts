@@ -1,5 +1,5 @@
-export const phoneDisplay = "+971 58 6524993";
-export const phoneHref = "tel:+971586524993";
+export const phoneDisplay = "+971 52 781 9949";
+export const phoneHref = "tel:+971527819949";
 
 export const nav = [
   { href: "/", label: "Home" },
@@ -115,7 +115,7 @@ export const copy = {
     headline: "Contact",
     lead: "Call the published number, or send the form. A success message appears only after the server accepts the enquiry.",
     unconfigured:
-      "The enquiry form is not connected yet. It cannot confirm receipt. Call +971 58 6524993.",
+      "The enquiry form is not connected yet. It cannot confirm receipt. Call +971 52 781 9949.",
     labels: {
       fullName: "Full name",
       organisation: "Organisation",
@@ -128,7 +128,7 @@ export const copy = {
     sending: "Sending.",
     accepted: "Your enquiry was accepted.",
     rejected:
-      "Your enquiry was not accepted. It has not been confirmed as received. You can try again or call +971 58 6524993.",
+      "Your enquiry was not accepted. It has not been confirmed as received. You can try again or call +971 52 781 9949.",
     invalid: "Check the highlighted fields and try again.",
     required: "Required",
     privacy:
@@ -213,6 +213,6 @@ export const pages = {
     headline: copy.contact.headline,
     lead: copy.contact.lead,
     unpublished: "Email, domain, and office address are not published.",
-    description: "Call +971 58 6524993. The enquiry form confirms receipt only after the server accepts it.",
+    description: "Call +971 52 781 9949. The enquiry form confirms receipt only after the server accepts it.",
   },
 } as const;
