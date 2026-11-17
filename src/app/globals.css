@@ -556,33 +556,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .sequence-step::before { display: none; }
 }
 
-/* ---------- nameplates ---------- */
-.nameplates { display: grid; gap: 3rem; }
-.nameplate { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.5rem; align-items: start; padding-top: 1.75rem; border-top: 2px solid var(--color-ink); }
-.nameplate-mono {
-  display: grid; place-items: center;
-  width: 5.5rem; aspect-ratio: 1;
-  border: 1px solid var(--color-ink);
-  font-family: var(--font-hd); font-weight: 300; font-size: 2.25rem; letter-spacing: 0.04em;
-  background: linear-gradient(135deg, transparent calc(50% - 0.5px), var(--line-light-strong) 50%, transparent calc(50% + 0.5px));
-}
-.nameplate-photo {
-  width: 6.5rem;
-  height: auto;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  display: block;
-}
-.nameplate-body { display: grid; gap: 0.4rem; }
-.nameplate-index { font-family: var(--font-mn); font-size: 0.6875rem; letter-spacing: 0.14em; color: var(--color-steel-strong); }
-.nameplate-name { font-family: var(--font-hd); font-weight: 400; font-size: clamp(1.9rem, 3.4vw, 3rem); line-height: 1.02; }
-.nameplate-title { font-family: var(--font-mn); font-size: 0.8125rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-signal-deep); }
-@media (min-width: 900px) {
-  .nameplates { grid-template-columns: 1fr 1fr; gap: 5rem; }
-  .nameplate-mono { width: 7rem; font-size: 2.75rem; }
-  .nameplate-photo { width: 8rem; }
-  .nameplate:nth-child(2) { margin-top: 4rem; }
-}
 
 /* ---------- contact (home + page) ---------- */
 .contact-grid { display: grid; gap: 3rem; }
@@ -719,30 +692,43 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 }
 
 /* Leadership */
-.leaders { display: grid; gap: 0; border-top: 2px solid var(--color-ink); }
-.leader-row { display: grid; gap: 1.5rem; padding-block: 2.75rem; border-bottom: 1px solid var(--line-light-strong); }
-.leader-mono {
-  display: grid; place-items: center; width: 6.5rem; aspect-ratio: 1;
-  border: 1px solid var(--color-ink); background: var(--color-paper);
-  font-family: var(--font-hd); font-weight: 300; font-size: 2.5rem;
-}
-.leader-photo {
-  width: 7rem;
-  height: auto;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
+.promoters { display: grid; gap: 3.5rem; margin: 0; padding: 0; list-style: none; }
+.promoter { display: grid; align-content: start; }
+.promoter-photo {
   display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: center 18%;
+  border: 0;
+  border-radius: 0;
+  background: var(--color-paper);
 }
-.leader-name { font-family: var(--font-hd); font-weight: 400; font-size: clamp(2.5rem, 6.5vw, 6rem); line-height: 0.95; letter-spacing: -0.01em; }
-.leader-meta { display: grid; gap: 0.5rem; align-content: end; }
-.leader-meta .nameplate-title { font-size: 0.875rem; }
-@media (min-width: 900px) {
-  .leader-row { grid-template-columns: 9rem minmax(0, 1fr) 14rem; gap: 3rem; align-items: center; padding-block: 3.5rem; }
-  .leader-mono { width: 8rem; font-size: 3rem; }
-  .leader-photo { width: 9rem; }
-  .leader-row:nth-child(2) .leader-name { padding-left: 8%; }
+.promoter-copy {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-ink);
 }
-.leader-note { margin-top: 2.5rem; max-width: 40rem; color: var(--color-ink-soft); }
+.promoter-role {
+  font-family: var(--font-mn);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-steel-strong);
+}
+.promoter-name {
+  font-family: var(--font-hd);
+  font-weight: 400;
+  font-size: clamp(1.75rem, 2.6vw, 2.4rem);
+  line-height: 1.05;
+}
+@media (min-width: 800px) {
+  .promoters { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4rem 5rem; max-width: 62rem; }
+}
+.leader-note { margin-top: 3rem; max-width: 40rem; color: var(--color-ink-soft); }
 
 /* Contact page */
 .contact-split { display: grid; }
@@ -785,7 +771,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 /* ---------- cream / orange / lime accents ---------- */
 .sequence-step:first-child .sequence-node { background: var(--color-lime); color: var(--color-ink); border-color: var(--color-ink); }
 .sequence::before { background: linear-gradient(90deg, var(--color-lime-deep), var(--color-ink) 30%); }
-.nameplate-title { color: var(--color-lime-deep); }
 .chapter-progress span { background: var(--color-lime-deep) !important; }
 .scope-node-dark a::after, .hero-activities .ha-arrow { color: var(--color-signal); }
 .scope-node-dark .scope-kicker { color: var(--color-lime); }

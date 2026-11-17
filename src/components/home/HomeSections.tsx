@@ -2,7 +2,6 @@ import Link from "next/link";
 import { RoadSection } from "@/components/drawings/RoadSection";
 import { BoomerangVideoBg } from "@/components/home/BoomerangVideoBg";
 import { StructuralPlan } from "@/components/drawings/StructuralPlan";
-import { Nameplates } from "@/components/site/Nameplates";
 import { ScopeDiagram } from "@/components/site/ScopeDiagram";
 import { Sequence } from "@/components/site/Sequence";
 import { SheetHeader } from "@/components/site/SheetHeader";
@@ -16,7 +15,6 @@ export function HomeSections() {
       <Road />
       <Company />
       <Approach />
-      <Leadership />
       <Contact />
     </>
   );
@@ -192,23 +190,6 @@ function Approach() {
             {copy.approach.read}
           </Link>
         </div>
-      </div>
-    </section>
-  );
-}
-
-function Leadership() {
-  return (
-    <section className="band band-paper" id="leadership" aria-labelledby="leadership-heading">
-      <div className="frame">
-        <SheetHeader sheet={sheets.leadership} />
-        <div className="split-intro" data-rise>
-          <h2 className="display-m" id="leadership-heading">
-            {copy.leadership.headline}
-          </h2>
-          <p className="lead">{copy.leadership.lead}</p>
-        </div>
-        <Nameplates people={copy.leadership.people} />
       </div>
     </section>
   );
