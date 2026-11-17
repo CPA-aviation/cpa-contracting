@@ -1,0 +1,84 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { copy, nav, phoneDisplay, phoneHref } from "@/content/site";
+
+export function SiteHeader({ variant = "solid" }: { variant?: "solid" | "overlay" }) {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLButtonElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const overlay = variant === "overlay";
+
+  useEffect(() => {
+    if (!overlay) return;
+    const onScroll = () => setScrolled(window.scrollY > window.innerHeight * 0.85);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [overlay]);
+
+  useEffect(() => {
+    if (!open) return;
+    function onKey(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      menuRef.current?.focus();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  return (
+    <header
+      className={[
+        "site-header",
+        overlay ? "site-header-overlay" : "",
+        overlay && scrolled ? "is-scrolled" : "",
+        open ? "is-open" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      <div className="frame header-bar">
+        <Link className="wordmark-link" href="/" aria-label={`${copy.wordmark}, home`}>
+          <span className="wordmark-main">{copy.wordmark}</span>
+          <span className="wordmark-sub">L.L.C · Dubai</span>
+        </Link>
+        <button
+          ref={menuRef}
+          className="menu-button"
+          type="button"
+          aria-expanded={open}
+          aria-controls="site-nav"
+          onClick={() => setOpen((value) => !value)}
+        >
+          <span>{open ? copy.closeMenu : copy.openMenu}</span>
+          <span className="menu-glyph" aria-hidden="true" />
+        </button>
+        <nav id="site-nav" aria-label="Primary">
+          <ul className={open ? "nav-list is-open" : "nav-list"}>
+            {nav.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} aria-current={pathname === item.href ? "page" : undefined}>
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        {overlay ? (
+          <a className="bbtn header-cta" href="#contact">
+            {copy.primaryCta}
+          </a>
+        ) : null}
+        <a className="header-phone" href={phoneHref}>
+          <span className="header-phone-label">Telephone</span>
+          <span className="header-phone-number">{phoneDisplay}</span>
+        </a>
+      </div>
+    </header>
+  );
+}
