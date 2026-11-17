@@ -34,7 +34,7 @@ export const copy = {
   hero: {
     headline: "Building and road contracting.",
     support:
-      "C P A CONTRACTING L.L.C is an independent Dubai company, licensed for Building Contracting and Road Contracting. It was registered in 2026.",
+      "C P A CONTRACTING L.L.C is a Dubai company, licensed for Building Contracting and Road Contracting.",
   },
   services: {
     eyebrow: "Licensed activities",
@@ -52,7 +52,7 @@ export const copy = {
   },
   company: {
     headline: "C P A CONTRACTING L.L.C",
-    lead: "An independent limited liability company in Dubai, licensed for Building Contracting and Road Contracting, and registered in 2026.",
+    lead: "A limited liability company in Dubai, licensed for Building Contracting and Road Contracting.",
     body: [
       "C P A CONTRACTING L.L.C is a standalone company. This website does not represent a CPA Group and it does not represent any other company.",
       "The Dubai Department of Economy and Tourism licence authorises two activities: Building Contracting and Road Contracting. The site does not publish work, plant, staff numbers, or certifications that are not on that licence.",
@@ -95,13 +95,21 @@ export const copy = {
   },
   leadership: {
     headline: "Leadership",
-    lead: "The company is managed by its two Managers.",
+    lead: "The company is led by its two Promoters.",
     people: [
-      { name: "Karun Arora Arora", title: "Manager" },
-      { name: "Vansh Arora", title: "Manager" },
+      {
+        name: "Mr. Karun Arora",
+        title: "Promoter",
+        image: "/images/leadership/karun-arora.jpg",
+      },
+      {
+        name: "Mr. Vansh Arora",
+        title: "Promoter",
+        image: "/images/leadership/vansh-arora.jpg",
+      },
     ],
     publicLine:
-      "Karun Arora Arora and Vansh Arora are the Managers of C P A CONTRACTING L.L.C. Biographies and photographs are not published.",
+      "Mr. Karun Arora and Mr. Vansh Arora are the Promoters of C P A CONTRACTING L.L.C.",
   },
   contact: {
     headline: "Contact",
@@ -197,7 +205,7 @@ export const pages = {
     headline: copy.leadership.headline,
     lead: copy.leadership.lead,
     people: copy.leadership.people,
-    note: "Biographies and photographs are not published.",
+    note: "Promoters of C P A CONTRACTING L.L.C.",
     publicLine: copy.leadership.publicLine,
     description: copy.leadership.publicLine,
   },

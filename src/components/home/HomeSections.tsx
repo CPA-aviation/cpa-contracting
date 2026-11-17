@@ -49,9 +49,6 @@ function Hero() {
           contracting.
         </h1>
         <p className="bhero-sub">{copy.hero.support}</p>
-        <a className="bbtn bhero-cta" href="#contact">
-          {copy.primaryCta}
-        </a>
       </div>
       <div className="bpanel-wrap">
         <div className="bpanel">

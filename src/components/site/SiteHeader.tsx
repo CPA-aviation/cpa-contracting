@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -44,8 +45,14 @@ export function SiteHeader({ variant = "solid" }: { variant?: "solid" | "overlay
     >
       <div className="frame header-bar">
         <Link className="wordmark-link" href="/" aria-label={`${copy.wordmark}, home`}>
-          <span className="wordmark-main">{copy.wordmark}</span>
-          <span className="wordmark-sub">L.L.C · Dubai</span>
+          <Image
+            src="/images/cpa-logo.png"
+            alt={`${copy.wordmark} — Restoring the past. Building the future`}
+            width={321}
+            height={176}
+            priority
+            className="header-logo-img"
+          />
         </Link>
         <button
           ref={menuRef}
