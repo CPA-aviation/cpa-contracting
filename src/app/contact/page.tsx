@@ -1,7 +1,7 @@
 import { EnquiryForm } from "@/components/contact/EnquiryForm";
 import { PageShell } from "@/components/site/PageShell";
 import { SheetHeader } from "@/components/site/SheetHeader";
-import { pages, phoneDisplay, phoneHref, sheets } from "@/content/site";
+import { emailDisplay, emailHref, officeAddress, pages, phoneDisplay, phoneHref, sheets } from "@/content/site";
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata("Contact", pages.contact.description);
@@ -21,7 +21,12 @@ export default function ContactPage() {
             <p data-page-line style={{ marginTop: "0.75rem" }}>
               <a className="contact-phone" href={phoneHref}>{phoneDisplay}</a>
             </p>
-            <p className="contact-unpublished" data-page-line>{pages.contact.unpublished}</p>
+            <p className="contact-phone-label" data-page-line>Email</p>
+            <p data-page-line>
+              <a className="contact-mail" href={emailHref}>{emailDisplay}</a>
+            </p>
+            <p className="contact-phone-label" data-page-line>Office</p>
+            <p className="contact-address" data-page-line>{officeAddress}</p>
           </div>
         </header>
         <section className="contact-form-side" aria-label="Enquiry form">

@@ -1,5 +1,8 @@
 export const phoneDisplay = "+971 52 781 9949";
 export const phoneHref = "tel:+971527819949";
+export const emailDisplay = "cpacontractingllc@gmail.com";
+export const emailHref = "mailto:cpacontractingllc@gmail.com";
+export const officeAddress = "Office No. 707, Burlington Tower, Business Bay, Dubai, UAE";
 
 export const nav = [
   { href: "/", label: "Home" },
@@ -212,7 +215,6 @@ export const pages = {
   contact: {
     headline: copy.contact.headline,
     lead: copy.contact.lead,
-    unpublished: "Email, domain, and office address are not published.",
-    description: "Call +971 52 781 9949. The enquiry form confirms receipt only after the server accepts it.",
+    description: "Call +971 52 781 9949, email cpacontractingllc@gmail.com, or visit Office No. 707, Burlington Tower, Business Bay, Dubai, UAE.",
   },
 } as const;

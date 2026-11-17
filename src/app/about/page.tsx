@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PageShell } from "@/components/site/PageShell";
 import { ScopeDiagram } from "@/components/site/ScopeDiagram";
 import { SheetHeader } from "@/components/site/SheetHeader";
-import { copy, pages, phoneDisplay, phoneHref, sheets } from "@/content/site";
+import { copy, emailDisplay, emailHref, officeAddress, pages, phoneDisplay, phoneHref, sheets } from "@/content/site";
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata("About", pages.about.description);
@@ -37,6 +37,14 @@ export default function AboutPage() {
               <div>
                 <dt>Telephone</dt>
                 <dd><a href={phoneHref}>{phoneDisplay}</a></dd>
+              </div>
+              <div>
+                <dt>Email</dt>
+                <dd><a href={emailHref}>{emailDisplay}</a></dd>
+              </div>
+              <div>
+                <dt>Office</dt>
+                <dd>{officeAddress}</dd>
               </div>
             </dl>
           </div>

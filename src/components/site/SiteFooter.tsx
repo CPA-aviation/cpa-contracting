@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { copy, nav, phoneDisplay, phoneHref } from "@/content/site";
+import { copy, emailDisplay, emailHref, nav, officeAddress, phoneDisplay, phoneHref } from "@/content/site";
 import { TitleBlock } from "@/components/site/TitleBlock";
 
 export function SiteFooter() {
@@ -31,6 +31,10 @@ export function SiteFooter() {
         <div className="footer-call">
           <p className="footer-label">Telephone</p>
           <a className="footer-phone" href={phoneHref}>{phoneDisplay}</a>
+          <p className="footer-label">Email</p>
+          <a className="footer-phone" href={emailHref}>{emailDisplay}</a>
+          <p className="footer-label">Office</p>
+          <p className="footer-address">{officeAddress}</p>
         </div>
       </div>
       <div className="frame">

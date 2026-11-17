@@ -5,7 +5,7 @@ import { StructuralPlan } from "@/components/drawings/StructuralPlan";
 import { ScopeDiagram } from "@/components/site/ScopeDiagram";
 import { Sequence } from "@/components/site/Sequence";
 import { SheetHeader } from "@/components/site/SheetHeader";
-import { copy, phoneDisplay, phoneHref, sheets } from "@/content/site";
+import { copy, emailDisplay, emailHref, officeAddress, phoneDisplay, phoneHref, sheets } from "@/content/site";
 
 export function HomeSections() {
   return (
@@ -209,6 +209,12 @@ function Contact() {
           <a className="contact-phone" href={phoneHref}>
             {phoneDisplay}
           </a>
+          <p className="contact-phone-label">Email</p>
+          <a className="contact-mail" href={emailHref}>
+            {emailDisplay}
+          </a>
+          <p className="contact-phone-label">Office</p>
+          <p className="contact-address">{officeAddress}</p>
         </div>
       </div>
     </section>

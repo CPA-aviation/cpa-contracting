@@ -45,7 +45,7 @@ export function EnquiryForm({
         <Field id="organisation" name="organisation" label={copy.contact.labels.organisation} disabled={locked} />
       </div>
       <div className="form-row">
-        <Field id="email" name="email" type="email" label={copy.contact.labels.email} required disabled={locked} invalid={invalid.includes("email")} hint="Your address. The company email is not published." />
+        <Field id="email" name="email" type="email" label={copy.contact.labels.email} required disabled={locked} invalid={invalid.includes("email")} hint="The email address for the reply." />
         <Field id="phone" name="phone" type="tel" label={copy.contact.labels.phone} disabled={locked} />
       </div>
       <div className="field">
