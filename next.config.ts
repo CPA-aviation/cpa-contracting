@@ -1,6 +1,8 @@
 import path from "path";
 import type { NextConfig } from "next";
 
+// Routes live in src/app. A Vercel build of the earlier upload has no app directory and cannot compile.
+
 const isProduction = process.env.NODE_ENV === "production";
 // Headers are captured when `next build` runs. Vercel builds over HTTPS.
 const httpsDeployment =
