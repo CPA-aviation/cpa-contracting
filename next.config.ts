@@ -2,7 +2,9 @@ import path from "path";
 import type { NextConfig } from "next";
 
 const isProduction = process.env.NODE_ENV === "production";
-const httpsDeployment = process.env.SECURITY_HTTPS === "true";
+// Headers are captured when `next build` runs. Vercel builds over HTTPS.
+const httpsDeployment =
+  process.env.SECURITY_HTTPS === "true" || process.env.VERCEL === "1";
 
 function contentSecurityPolicy(): string {
   const scriptSrc = ["'self'", "'unsafe-inline'"];
