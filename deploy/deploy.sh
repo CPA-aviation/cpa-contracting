@@ -30,7 +30,7 @@ pm2 save
 
 echo "==> Health check on 127.0.0.1:$PORT"
 for i in $(seq 1 15); do
-  if curl -fsS -o /dev/null "http://127.0.0.1:$PORT/"; then
+  if curl -fs -o /dev/null "http://127.0.0.1:$PORT/"; then
     echo "    OK — site is responding"
     exit 0
   fi
