@@ -25,13 +25,17 @@ export default function LeadershipPage() {
           <ul className="promoters">
             {pages.leadership.people.map((person) => (
               <li className="promoter" key={person.name} data-rise>
-                <Image
-                  src={person.image}
-                  alt=""
-                  width={640}
-                  height={800}
-                  className="promoter-photo"
-                />
+                <div className="promoter-frame">
+                  <Image
+                    src={person.image}
+                    alt={person.name}
+                    width={1264}
+                    height={1736}
+                    priority
+                    className="promoter-photo"
+                    sizes="(min-width: 800px) 340px, (min-width: 640px) 280px, 90vw"
+                  />
+                </div>
                 <div className="promoter-copy">
                   <p className="promoter-role">{person.title}</p>
                   <h2 className="promoter-name">{person.name}</h2>
