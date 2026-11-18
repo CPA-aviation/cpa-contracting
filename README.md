@@ -23,12 +23,16 @@ npm run build
 
 The form is not connected. It stays unavailable until `ENQUIRY_ENDPOINT` is set in the environment to an HTTPS endpoint that returns `{ "accepted": true }` with a success status. No company email is published, and a failed or missing response never shows the accepted message.
 
-## Public facts
+## Company Details
 
-- Wordmark: C P A CONTRACTING
-- Telephone: +971 58 6524993
-- Managers: Karun Arora Arora, Vansh Arora
-- Registered: 2026
-- License No. 1641004
+- **Company**: C P A CONTRACTING L.L.C
+- **Commercial License**: No. 1641004 (Dubai Department of Economy and Tourism)
+- **Licensed Activities**: Building Contracting & Road Contracting
+- **Promoters**: Mr. Karun Arora, Mr. Vansh Arora
+- **Telephone**: +971 52 781 9949
+- **Email**: cpacontractingllc@gmail.com
+- **Office**: Office No. 707, Burlington Tower, Business Bay, Dubai, UAE
 
-Email, domain, and office address are not published.
+## Documentation
+
+Project blueprints, brand guidelines, and phase specifications are organized in the [`docs/`](./docs) directory.
