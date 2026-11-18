@@ -695,18 +695,24 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 /* Leadership — Classical Executive Layout */
 .promoters-classical {
   display: grid;
-  gap: 2rem;
+  gap: 1.75rem;
   margin: 0;
   padding: 0;
   list-style: none;
-  max-width: 58rem;
+  width: 100%;
+}
+@media (min-width: 960px) {
+  .promoters-classical {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+  }
 }
 .promoter-card {
   display: grid;
   grid-template-columns: 1fr;
   align-items: center;
-  gap: 1.75rem;
-  padding: 2rem;
+  gap: 1.5rem;
+  padding: 1.75rem 1.5rem;
   border-radius: 8px;
   background: linear-gradient(135deg, #1d251a 0%, #253122 55%, #192217 100%);
   border: 1px solid rgba(197, 160, 89, 0.35);
@@ -729,17 +735,23 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   border-color: rgba(223, 186, 115, 0.65);
   box-shadow: 0 24px 50px -14px rgba(18, 24, 18, 0.6), 0 0 24px rgba(197, 160, 89, 0.2);
 }
-@media (min-width: 680px) {
+@media (min-width: 520px) {
   .promoter-card {
     grid-template-columns: auto 1fr;
-    gap: 2.75rem;
-    padding: 2.5rem 3rem;
+    gap: 1.75rem;
+    padding: 2rem;
+  }
+}
+@media (min-width: 1200px) {
+  .promoter-card {
+    gap: 2rem;
+    padding: 2.25rem 2.5rem;
   }
 }
 .promoter-avatar-gold-frame {
   position: relative;
-  width: 136px;
-  height: 136px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   padding: 3.5px;
   background: linear-gradient(135deg, #dfba73 0%, #8f6c31 35%, #f5e4b2 70%, #aa8238 100%);
@@ -747,9 +759,17 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   flex-shrink: 0;
   justify-self: center;
 }
-@media (min-width: 680px) {
+@media (min-width: 520px) {
   .promoter-avatar-gold-frame {
     justify-self: start;
+    width: 116px;
+    height: 116px;
+  }
+}
+@media (min-width: 1280px) {
+  .promoter-avatar-gold-frame {
+    width: 126px;
+    height: 126px;
   }
 }
 .promoter-avatar-inner {
@@ -771,6 +791,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .promoter-details {
   display: grid;
   align-content: center;
+  min-width: 0;
 }
 .promoter-eyebrow {
   font-family: var(--font-mn);
@@ -779,33 +800,39 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   text-transform: uppercase;
   color: #c5a059;
   font-weight: 500;
-  margin: 0 0 0.35rem 0;
+  margin: 0 0 0.3rem 0;
 }
 .promoter-title {
   font-family: var(--font-hd);
   font-weight: 400;
-  font-size: clamp(1.85rem, 2.5vw, 2.35rem);
-  line-height: 1.1;
+  font-size: clamp(1.5rem, 1.9vw, 2rem);
+  line-height: 1.15;
   color: #fbf7ef;
   margin: 0;
 }
 .promoter-gold-rule {
-  width: 3.75rem;
+  width: 3.25rem;
   height: 2px;
   background: linear-gradient(90deg, #c5a059 0%, #dfba73 60%, rgba(223, 186, 115, 0.2) 100%);
-  margin: 0.85rem 0 1rem 0;
+  margin: 0.75rem 0 0.85rem 0;
   border-radius: 1px;
 }
 .promoter-bio-text {
   display: grid;
-  gap: 0.4rem;
+  gap: 0.35rem;
   color: rgba(251, 247, 239, 0.88);
-  font-size: 0.95rem;
-  line-height: 1.6;
-  max-width: 52ch;
+  font-size: 0.9rem;
+  line-height: 1.55;
 }
 .promoter-bio-text p {
   margin: 0;
+}
+.leader-note {
+  margin-top: 3.5rem;
+  max-width: 58rem;
+  color: var(--color-ink-soft);
+  font-size: 0.95rem;
+  line-height: 1.55;
 }
 .leader-note {
   margin-top: 4rem;
