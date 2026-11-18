@@ -36,7 +36,7 @@ export function EnquiryForm({
   }
 
   const invalid = state.status === "invalid" ? state.fields : [];
-  const locked = !configured || state.status === "submitting";
+  const locked = !configured || state.status === "submitting" || state.status === "accepted";
 
   return (
     <form className="form" onSubmit={onSubmit} noValidate aria-describedby="enquiry-status">

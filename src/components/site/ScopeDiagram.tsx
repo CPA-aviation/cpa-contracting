@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 /** Licence scope as a simple structure diagram: one company, two licensed activities. */
-export function ScopeDiagram({ links = true }: { links?: boolean }) {
+export function ScopeDiagram({ links = true, caption = false }: { links?: boolean; caption?: boolean }) {
   return (
     <figure className="scope" aria-label="Licence scope: C P A CONTRACTING L.L.C holds two licensed activities, Building Contracting and Road Contracting.">
       <div className="scope-root">
@@ -20,7 +20,9 @@ export function ScopeDiagram({ links = true }: { links?: boolean }) {
           {links ? <Link href="/road-contracting">Road Contracting</Link> : <span>Road Contracting</span>}
         </div>
       </div>
-      <figcaption className="scope-caption">Dubai commercial licence · two licensed activities</figcaption>
+      {caption ? (
+        <figcaption className="scope-caption">Dubai commercial licence · two licensed activities</figcaption>
+      ) : null}
     </figure>
   );
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { ScrollReset } from "@/components/site/ScrollReset";
 import { copy } from "@/content/site";
 import "./globals.css";
 
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        <ScrollReset />
         <a className="skip" href="#content">
           {copy.skip}
         </a>

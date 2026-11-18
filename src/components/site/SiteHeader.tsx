@@ -44,7 +44,7 @@ export function SiteHeader({ variant = "solid" }: { variant?: "solid" | "overlay
         .join(" ")}
     >
       <div className="frame header-bar">
-        <Link className="wordmark-link" href="/" aria-label={`${copy.wordmark}, home`}>
+        <Link className="wordmark-link" href="/" aria-label={`${copy.wordmark}, home`} onClick={() => setOpen(false)}>
           <Image
             src="/images/cpa-logo.png"
             alt={`${copy.wordmark} — Restoring the past. Building the future`}
@@ -69,7 +69,11 @@ export function SiteHeader({ variant = "solid" }: { variant?: "solid" | "overlay
           <ul className={open ? "nav-list is-open" : "nav-list"}>
             {nav.map((item) => (
               <li key={item.href}>
-                <Link href={item.href} aria-current={pathname === item.href ? "page" : undefined}>
+                <Link
+                  href={item.href}
+                  aria-current={pathname === item.href ? "page" : undefined}
+                  onClick={() => setOpen(false)}
+                >
                   {item.label}
                 </Link>
               </li>
@@ -77,9 +81,9 @@ export function SiteHeader({ variant = "solid" }: { variant?: "solid" | "overlay
           </ul>
         </nav>
         {overlay ? (
-          <a className="bbtn header-cta" href="#contact">
+          <Link className="bbtn header-cta" href="/contact" onClick={() => setOpen(false)}>
             {copy.primaryCta}
-          </a>
+          </Link>
         ) : null}
         <a className="header-phone" href={phoneHref}>
           <span className="header-phone-label">Telephone</span>

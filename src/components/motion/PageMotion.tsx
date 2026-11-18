@@ -16,6 +16,7 @@ export function PageMotion({ children }: { children: ReactNode }) {
 
   useGSAP(
     () => {
+      ScrollTrigger.clearScrollMemory();
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         gsap.utils.toArray<HTMLElement>("[data-rise]").forEach((block) => {

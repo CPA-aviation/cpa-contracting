@@ -5,7 +5,7 @@ import { StructuralPlan } from "@/components/drawings/StructuralPlan";
 import { ScopeDiagram } from "@/components/site/ScopeDiagram";
 import { Sequence } from "@/components/site/Sequence";
 import { SheetHeader } from "@/components/site/SheetHeader";
-import { copy, emailDisplay, emailHref, officeAddress, phoneDisplay, phoneHref, sheets } from "@/content/site";
+import { copy, sheets } from "@/content/site";
 
 export function HomeSections() {
   return (
@@ -15,7 +15,6 @@ export function HomeSections() {
       <Road />
       <Company />
       <Approach />
-      <Contact />
     </>
   );
 }
@@ -51,13 +50,6 @@ function Hero() {
       <div className="bpanel-wrap">
         <div className="bpanel">
           <div className="bpanel-row1">
-            <div>
-              <p className="bpanel-label">What do we do?</p>
-              <h2 className="bpanel-title">
-                Two licensed <br className="br-sm" />
-                activities.
-              </h2>
-            </div>
             <div className="bpanel-body">
               <p>{copy.services.support}</p>
               <p className="bpanel-note">Background: illustrative visualisation · Not a company project</p>
@@ -189,32 +181,6 @@ function Approach() {
           <Link className="arrow-link" href="/approach">
             {copy.approach.read}
           </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Contact() {
-  return (
-    <section className="band band-graphite" id="contact" aria-labelledby="contact-heading">
-      <div className="frame">
-        <SheetHeader sheet={sheets.contact} tone="dark" />
-        <div className="contact-call" data-rise>
-          <h2 className="display-l" id="contact-heading">
-            {copy.contact.headline}
-          </h2>
-          <p className="contact-lead">{copy.contact.lead}</p>
-          <p className="contact-phone-label">Telephone</p>
-          <a className="contact-phone" href={phoneHref}>
-            {phoneDisplay}
-          </a>
-          <p className="contact-phone-label">Email</p>
-          <a className="contact-mail" href={emailHref}>
-            {emailDisplay}
-          </a>
-          <p className="contact-phone-label">Office</p>
-          <p className="contact-address">{officeAddress}</p>
         </div>
       </div>
     </section>
