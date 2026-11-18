@@ -40,6 +40,12 @@ function Hero() {
     <section className="bhero" id="top" aria-labelledby="hero-heading">
       <BoomerangVideoBg />
       <div className="bhero-copy">
+        <div className="hero-coming-soon-wrap" data-rise>
+          <div className="hero-coming-soon-pill" role="status" aria-label="Website coming soon">
+            <span className="hero-pill-dot" aria-hidden="true" />
+            <span>Website Coming Soon</span>
+          </div>
+        </div>
         <h1 className="bhero-title" id="hero-heading">
           Building and road
           <br />
