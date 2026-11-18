@@ -22,24 +22,27 @@ export default function LeadershipPage() {
 
       <section className="band band-stone" aria-label="Promoters">
         <div className="frame">
-          <ul className="promoters">
+          <ul className="promoters-classical">
             {pages.leadership.people.map((person) => (
-              <li className="promoter" key={person.name} data-rise>
-                <div className="promoter-frame">
-                  <Image
-                    src={person.image}
-                    alt={person.name}
-                    width={1264}
-                    height={1736}
-                    priority
-                    className="promoter-photo"
-                    sizes="(min-width: 800px) 340px, (min-width: 640px) 280px, 90vw"
-                  />
+              <li className="promoter-card" key={person.name} data-rise>
+                <div className="promoter-avatar-gold-frame">
+                  <div className="promoter-avatar-inner">
+                    <Image
+                      src={person.image}
+                      alt={person.name}
+                      width={1200}
+                      height={1200}
+                      priority
+                      className="promoter-avatar-img"
+                      sizes="160px"
+                    />
+                  </div>
                 </div>
-                <div className="promoter-copy">
-                  <p className="promoter-role">{person.title}</p>
-                  <h2 className="promoter-name">{person.name}</h2>
-                  <div className="promoter-bio">
+                <div className="promoter-details">
+                  <p className="promoter-eyebrow">{person.title}</p>
+                  <h2 className="promoter-title">{person.name}</h2>
+                  <div className="promoter-gold-rule" aria-hidden="true" />
+                  <div className="promoter-bio-text">
                     {person.bio.map((line, idx) => (
                       <p key={idx}>{line}</p>
                     ))}

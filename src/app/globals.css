@@ -692,81 +692,120 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .chapter-progress span { position: absolute; inset: 0 auto 0 0; background: var(--color-signal-deep); }
 }
 
-/* Leadership */
-.promoters {
+/* Leadership — Classical Executive Layout */
+.promoters-classical {
   display: grid;
-  gap: 2.5rem;
+  gap: 2rem;
   margin: 0;
   padding: 0;
   list-style: none;
-  max-width: 22rem;
+  max-width: 58rem;
 }
-.promoter {
+.promoter-card {
   display: grid;
-  align-content: start;
-  width: 100%;
-  max-width: 21rem;
-}
-.promoter-frame {
+  grid-template-columns: 1fr;
+  align-items: center;
+  gap: 1.75rem;
+  padding: 2rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1d251a 0%, #253122 55%, #192217 100%);
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  box-shadow: 0 16px 40px -12px rgba(18, 24, 18, 0.45), 0 2px 6px rgba(0, 0, 0, 0.2);
   position: relative;
-  width: 100%;
   overflow: hidden;
-  border-radius: 4px;
-  border: 1px solid rgba(27, 35, 24, 0.14);
-  background: var(--color-paper);
-  box-shadow: 0 4px 24px -4px rgba(27, 35, 24, 0.08), 0 1px 3px rgba(27, 35, 24, 0.05);
   transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
 }
-.promoter:hover .promoter-frame {
-  transform: translateY(-3px);
-  border-color: rgba(27, 35, 24, 0.28);
-  box-shadow: 0 12px 36px -8px rgba(27, 35, 24, 0.16);
+.promoter-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(223, 186, 115, 0.6), transparent);
 }
-.promoter-photo {
+.promoter-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(223, 186, 115, 0.65);
+  box-shadow: 0 24px 50px -14px rgba(18, 24, 18, 0.6), 0 0 24px rgba(197, 160, 89, 0.2);
+}
+@media (min-width: 680px) {
+  .promoter-card {
+    grid-template-columns: auto 1fr;
+    gap: 2.75rem;
+    padding: 2.5rem 3rem;
+  }
+}
+.promoter-avatar-gold-frame {
+  position: relative;
+  width: 136px;
+  height: 136px;
+  border-radius: 50%;
+  padding: 3.5px;
+  background: linear-gradient(135deg, #dfba73 0%, #8f6c31 35%, #f5e4b2 70%, #aa8238 100%);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.55), 0 0 16px rgba(197, 160, 89, 0.3);
+  flex-shrink: 0;
+  justify-self: center;
+}
+@media (min-width: 680px) {
+  .promoter-avatar-gold-frame {
+    justify-self: start;
+  }
+}
+.promoter-avatar-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  background: #141b12;
+  box-shadow: inset 0 0 0 2px rgba(18, 24, 18, 0.85);
+}
+.promoter-avatar-img {
   display: block;
   width: 100%;
-  height: auto;
-  aspect-ratio: 158 / 217;
+  height: 100%;
   object-fit: cover;
   object-position: center;
-  background: #f5f3ee;
 }
-.promoter-copy {
+.promoter-details {
   display: grid;
-  gap: 0.4rem;
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-ink);
+  align-content: center;
 }
-.promoter-role {
+.promoter-eyebrow {
   font-family: var(--font-mn);
-  font-size: 0.72rem;
-  letter-spacing: 0.2em;
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--color-signal-deep);
+  color: #c5a059;
   font-weight: 500;
+  margin: 0 0 0.35rem 0;
 }
-.promoter-name {
+.promoter-title {
   font-family: var(--font-hd);
   font-weight: 400;
-  font-size: clamp(1.45rem, 1.9vw, 1.85rem);
-  line-height: 1.15;
-  color: var(--color-ink);
+  font-size: clamp(1.85rem, 2.5vw, 2.35rem);
+  line-height: 1.1;
+  color: #fbf7ef;
+  margin: 0;
 }
-.promoter-bio {
+.promoter-gold-rule {
+  width: 3.75rem;
+  height: 2px;
+  background: linear-gradient(90deg, #c5a059 0%, #dfba73 60%, rgba(223, 186, 115, 0.2) 100%);
+  margin: 0.85rem 0 1rem 0;
+  border-radius: 1px;
+}
+.promoter-bio-text {
   display: grid;
-  gap: 0.35rem;
-  margin-top: 0.65rem;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  color: var(--color-ink-soft);
+  gap: 0.4rem;
+  color: rgba(251, 247, 239, 0.88);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 52ch;
 }
-@media (min-width: 700px) {
-  .promoters {
-    grid-template-columns: repeat(2, minmax(0, 21rem));
-    gap: 3.5rem 5rem;
-    max-width: 48rem;
-  }
+.promoter-bio-text p {
+  margin: 0;
 }
 .leader-note {
   margin-top: 4rem;
