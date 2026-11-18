@@ -43,6 +43,14 @@ export function SiteHeader({ variant = "solid" }: { variant?: "solid" | "overlay
         .filter(Boolean)
         .join(" ")}
     >
+      <aside className="top-banner" role="region" aria-label="Announcement">
+        <div className="frame top-banner-inner">
+          <span className="top-banner-tag">COMING SOON</span>
+          <span className="top-banner-text">
+            C P A CONTRACTING L.L.C is launching shortly. Building and road contracting in Dubai.
+          </span>
+        </div>
+      </aside>
       <div className="frame header-bar">
         <Link className="wordmark-link" href="/" aria-label={`${copy.wordmark}, home`} onClick={() => setOpen(false)}>
           <Image

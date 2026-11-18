@@ -159,6 +159,57 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .sheet-header-dark .sheet-rule { background: var(--line-dark-strong); }
 @media (min-width: 1024px) { .sheet-header { margin-bottom: 4.5rem; } }
 
+/* ---------- top announcement banner ---------- */
+.top-banner {
+  background: #b8935a;
+  color: #1b2318;
+  padding: 0.45rem 1.25rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 31;
+}
+.top-banner-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  text-align: center;
+  flex-wrap: wrap;
+}
+.top-banner-tag {
+  font-family: var(--font-mn);
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #1b2318;
+  white-space: nowrap;
+  display: inline-block;
+}
+.top-banner-text {
+  font-family: var(--font-tx), system-ui, -apple-system, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 450;
+  letter-spacing: 0.01em;
+  color: #1b2318;
+  line-height: 1.4;
+}
+@media (max-width: 640px) {
+  .top-banner {
+    padding: 0.35rem 0.75rem;
+  }
+  .top-banner-inner {
+    gap: 0.25rem 0.5rem;
+  }
+  .top-banner-tag {
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+  }
+  .top-banner-text {
+    font-size: 0.75rem;
+  }
+}
+
 /* ---------- header ---------- */
 .site-header {
   position: sticky; top: 0; z-index: 30;
