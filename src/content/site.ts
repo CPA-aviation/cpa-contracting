@@ -104,11 +104,19 @@ export const copy = {
         name: "Mr. Karun Arora",
         title: "Promoter",
         image: "/images/leadership/karun-arora.jpg",
+        bio: [
+          "Guides commercial strategy, corporate governance, and key partnerships across the UAE.",
+          "Champions delivery excellence and statutory standards in building and road contracting.",
+        ],
       },
       {
         name: "Mr. Vansh Arora",
         title: "Promoter",
         image: "/images/leadership/vansh-arora.jpg",
+        bio: [
+          "Oversees operational execution, technical engineering, and on-site safety protocols.",
+          "Drives modern construction practices and precision compliance across all project works.",
+        ],
       },
     ],
     publicLine:

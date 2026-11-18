@@ -753,6 +753,14 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   line-height: 1.15;
   color: var(--color-ink);
 }
+.promoter-bio {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.65rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+}
 @media (min-width: 700px) {
   .promoters {
     grid-template-columns: repeat(2, minmax(0, 21rem));

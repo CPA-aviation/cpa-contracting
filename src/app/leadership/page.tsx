@@ -39,6 +39,11 @@ export default function LeadershipPage() {
                 <div className="promoter-copy">
                   <p className="promoter-role">{person.title}</p>
                   <h2 className="promoter-name">{person.name}</h2>
+                  <div className="promoter-bio">
+                    {person.bio.map((line, idx) => (
+                      <p key={idx}>{line}</p>
+                    ))}
+                  </div>
                 </div>
               </li>
             ))}
