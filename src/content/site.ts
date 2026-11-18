@@ -114,8 +114,8 @@ export const copy = {
         title: "Promoter",
         image: "/images/leadership/vansh-arora.jpg",
         bio: [
-          "Oversees operational execution, technical engineering, and on-site safety protocols.",
-          "Drives modern construction practices and precision compliance across all project works.",
+          "Coordinates project operations, administrative workflows, and client liaison.",
+          "Supports on-site coordination and ensures high standards across all active works.",
         ],
       },
     ],
