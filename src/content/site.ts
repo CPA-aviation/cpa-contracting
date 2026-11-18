@@ -12,6 +12,7 @@ export const nav = [
   { href: "/approach", label: "Approach" },
   { href: "/leadership", label: "Leadership" },
   { href: "/contact", label: "Contact" },
+  { href: "https://cparora.com", label: "Parent Company", external: true },
 ] as const;
 
 export const interests = [

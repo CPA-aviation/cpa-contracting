@@ -67,17 +67,33 @@ export function SiteHeader({ variant = "solid" }: { variant?: "solid" | "overlay
         </button>
         <nav id="site-nav" aria-label="Primary">
           <ul className={open ? "nav-list is-open" : "nav-list"}>
-            {nav.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  aria-current={pathname === item.href ? "page" : undefined}
-                  onClick={() => setOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
+            {nav.map((item) => {
+              const isExternal = "external" in item && item.external;
+              return (
+                <li key={item.href}>
+                  {isExternal ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="nav-link-external"
+                      onClick={() => setOpen(false)}
+                    >
+                      <span>{item.label}</span>
+                      <span className="nav-ext-arrow" aria-hidden="true">↗</span>
+                    </a>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      aria-current={pathname === item.href ? "page" : undefined}
+                      onClick={() => setOpen(false)}
+                    >
+                      {item.label}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </nav>
         {overlay ? (

@@ -21,11 +21,20 @@ export function SiteFooter() {
         </div>
         <nav aria-label="Footer">
           <ul className="footer-nav">
-            {nav.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href}>{item.label}</Link>
-              </li>
-            ))}
+            {nav.map((item) => {
+              const isExternal = "external" in item && item.external;
+              return (
+                <li key={item.href}>
+                  {isExternal ? (
+                    <a href={item.href} target="_blank" rel="noopener noreferrer">
+                      {item.label} ↗
+                    </a>
+                  ) : (
+                    <Link href={item.href}>{item.label}</Link>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </nav>
         <div className="footer-call">
