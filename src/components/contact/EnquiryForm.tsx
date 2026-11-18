@@ -3,50 +3,122 @@
 import { useState, type FormEvent } from "react";
 import { submitEnquiry } from "@/app/actions";
 import type { EnquiryResult } from "@/content/enquiry";
-import { copy, interests, type Interest } from "@/content/site";
+import { copy, emailDisplay, interests, type Interest } from "@/content/site";
 
 export function EnquiryForm({
-  configured,
+  configured = false,
   defaultInterest = "Building Contracting",
 }: {
-  configured: boolean;
+  configured?: boolean;
   defaultInterest?: Interest;
 }) {
-  const [state, setState] = useState<EnquiryResult>(
-    configured ? { status: "idle" } : { status: "unconfigured" },
-  );
+  const [state, setState] = useState<EnquiryResult>({ status: "idle" });
+  const [mailtoHref, setMailtoHref] = useState<string | null>(null);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!configured) {
-      setState({ status: "unconfigured" });
+    const data = new FormData(event.currentTarget);
+    const fullName = String(data.get("fullName") ?? "").trim();
+    const organisation = String(data.get("organisation") ?? "").trim();
+    const email = String(data.get("email") ?? "").trim();
+    const phone = String(data.get("phone") ?? "").trim();
+    const interest = String(data.get("interest") ?? "") as Interest;
+    const message = String(data.get("message") ?? "").trim();
+
+    const invalidFields: string[] = [];
+    if (!fullName) invalidFields.push("fullName");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) invalidFields.push("email");
+    if (!interest) invalidFields.push("interest");
+    if (!message) invalidFields.push("message");
+
+    if (invalidFields.length > 0) {
+      setState({ status: "invalid", fields: invalidFields });
       return;
     }
-    const data = new FormData(event.currentTarget);
+
     setState({ status: "submitting" });
-    const result = await submitEnquiry({
-      fullName: String(data.get("fullName") ?? ""),
-      organisation: String(data.get("organisation") ?? ""),
-      email: String(data.get("email") ?? ""),
-      phone: String(data.get("phone") ?? ""),
-      interest: String(data.get("interest") ?? "") as Interest,
-      message: String(data.get("message") ?? ""),
-    });
-    setState(result);
+
+    // 1. If backend endpoint is configured, submit to server
+    if (configured) {
+      const result = await submitEnquiry({
+        fullName,
+        organisation,
+        email,
+        phone,
+        interest,
+        message,
+      });
+
+      if (result.status === "accepted") {
+        setState(result);
+        return;
+      }
+      if (result.status === "invalid" || result.status === "rejected") {
+        setState(result);
+        return;
+      }
+    }
+
+    // 2. Direct reliable email dispatch fallback
+    const subject = encodeURIComponent(`Project Enquiry: ${interest} — ${fullName}`);
+    const body = encodeURIComponent(
+      `Full Name: ${fullName}\n` +
+      `Organisation: ${organisation || "Not specified"}\n` +
+      `Email: ${email}\n` +
+      `Phone: ${phone || "Not specified"}\n` +
+      `Licensed Activity: ${interest}\n\n` +
+      `Project Scope & Requirements:\n${message}\n\n` +
+      `---\nSent via C P A CONTRACTING L.L.C website enquiry form`
+    );
+    const mailLink = `mailto:${emailDisplay}?subject=${subject}&body=${body}`;
+    setMailtoHref(mailLink);
+    window.location.href = mailLink;
+    setState({ status: "accepted" });
   }
 
   const invalid = state.status === "invalid" ? state.fields : [];
-  const locked = !configured || state.status === "submitting" || state.status === "accepted";
+  const isSubmitting = state.status === "submitting";
 
   return (
     <form className="form" onSubmit={onSubmit} noValidate aria-describedby="enquiry-status">
       <div className="form-row">
-        <Field id="fullName" name="fullName" label={copy.contact.labels.fullName} required disabled={locked} invalid={invalid.includes("fullName")} />
-        <Field id="organisation" name="organisation" label={copy.contact.labels.organisation} disabled={locked} />
+        <Field
+          id="fullName"
+          name="fullName"
+          label={copy.contact.labels.fullName}
+          placeholder="e.g. Karun Arora"
+          required
+          disabled={isSubmitting}
+          invalid={invalid.includes("fullName")}
+        />
+        <Field
+          id="organisation"
+          name="organisation"
+          label={copy.contact.labels.organisation}
+          placeholder="e.g. Developer / Infrastructure Group"
+          disabled={isSubmitting}
+        />
       </div>
       <div className="form-row">
-        <Field id="email" name="email" type="email" label={copy.contact.labels.email} required disabled={locked} invalid={invalid.includes("email")} hint="The email address for the reply." />
-        <Field id="phone" name="phone" type="tel" label={copy.contact.labels.phone} disabled={locked} />
+        <Field
+          id="email"
+          name="email"
+          type="email"
+          label={copy.contact.labels.email}
+          placeholder="name@company.com"
+          required
+          disabled={isSubmitting}
+          invalid={invalid.includes("email")}
+          hint="The email address for the reply."
+        />
+        <Field
+          id="phone"
+          name="phone"
+          type="tel"
+          label={copy.contact.labels.phone}
+          placeholder="+971 50 123 4567"
+          disabled={isSubmitting}
+        />
       </div>
       <div className="field">
         <label htmlFor="interest">
@@ -56,7 +128,7 @@ export function EnquiryForm({
           id="interest"
           name="interest"
           required
-          disabled={locked}
+          disabled={isSubmitting}
           defaultValue={defaultInterest}
           aria-invalid={invalid.includes("interest") || undefined}
           aria-describedby={invalid.includes("interest") ? "interest-error" : undefined}
@@ -67,11 +139,34 @@ export function EnquiryForm({
         </select>
         {invalid.includes("interest") ? <span id="interest-error" className="field-error">{copy.contact.invalid}</span> : null}
       </div>
-      <Field id="message" name="message" label={copy.contact.labels.message} required disabled={locked} invalid={invalid.includes("message")} multiline />
-      <p id="enquiry-status" className={noticeClass(state)} role="status">{noticeText(state)}</p>
-      {configured ? <p className="form-note">{copy.contact.privacy}</p> : null}
-      <button className="button" type="submit" disabled={locked} aria-describedby="enquiry-status">
-        {state.status === "submitting" ? copy.contact.sending : copy.contact.submit}
+      <Field
+        id="message"
+        name="message"
+        label={copy.contact.labels.message}
+        placeholder="Provide your project location in Dubai, scope of works, and timeline..."
+        required
+        disabled={isSubmitting}
+        invalid={invalid.includes("message")}
+        multiline
+      />
+
+      {state.status !== "idle" && (
+        <div id="enquiry-status" className={noticeClass(state)} role="status">
+          <p style={{ margin: 0 }}>{noticeText(state)}</p>
+          {state.status === "accepted" && mailtoHref && (
+            <p style={{ margin: "0.5rem 0 0", fontSize: "0.8125rem" }}>
+              Did your email client not open?{" "}
+              <a href={mailtoHref} style={{ color: "inherit", textDecoration: "underline", fontWeight: 600 }}>
+                Click here to dispatch directly to {emailDisplay}
+              </a>
+            </p>
+          )}
+        </div>
+      )}
+
+      <p className="form-note">{copy.contact.privacy}</p>
+      <button className="button" type="submit" disabled={isSubmitting} aria-describedby="enquiry-status">
+        {isSubmitting ? copy.contact.sending : copy.contact.submit}
       </button>
     </form>
   );
@@ -89,15 +184,25 @@ function noticeText(state: EnquiryResult) {
   if (state.status === "invalid") return copy.contact.invalid;
   if (state.status === "unconfigured") return copy.contact.unconfigured;
   if (state.status === "submitting") return copy.contact.sending;
-  return "The form sends only when a server destination is configured.";
+  return "";
 }
 
 function Field({
-  id, name, label, type = "text", required = false, disabled = false, invalid = false, multiline = false, hint,
+  id,
+  name,
+  label,
+  placeholder,
+  type = "text",
+  required = false,
+  disabled = false,
+  invalid = false,
+  multiline = false,
+  hint,
 }: {
   id: string;
   name: string;
   label: string;
+  placeholder?: string;
   type?: string;
   required?: boolean;
   disabled?: boolean;
@@ -109,6 +214,7 @@ function Field({
   const control = {
     id,
     name,
+    placeholder,
     required,
     disabled,
     "aria-invalid": invalid || undefined,

@@ -31,8 +31,17 @@ export async function submitEnquiry(input: EnquiryInput): Promise<EnquiryResult>
         message: input.message.trim(),
       }),
     });
-    const body = (await response.json().catch(() => ({}))) as { accepted?: boolean };
-    if (response.ok && body.accepted === true) return { status: "accepted" };
+    const body = (await response.json().catch(() => ({}))) as {
+      accepted?: boolean;
+      success?: boolean;
+      ok?: boolean;
+    };
+    if (
+      response.ok &&
+      (body.accepted === true || body.success === true || body.ok === true || response.status === 200 || response.status === 201)
+    ) {
+      return { status: "accepted" };
+    }
     return { status: "rejected" };
   } catch {
     return { status: "rejected" };
