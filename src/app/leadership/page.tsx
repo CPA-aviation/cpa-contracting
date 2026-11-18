@@ -51,7 +51,12 @@ export default function LeadershipPage() {
               </li>
             ))}
           </ul>
-          <p className="leader-note">{pages.leadership.publicLine}</p>
+          <div className="leader-note-wrap" data-rise>
+            <p className="leader-note">
+              <span className="leader-note-text">{pages.leadership.publicLine}</span>
+              <span className="leader-note-underline" aria-hidden="true" />
+            </p>
+          </div>
         </div>
       </section>
 

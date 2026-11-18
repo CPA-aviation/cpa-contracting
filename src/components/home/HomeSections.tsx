@@ -41,9 +41,9 @@ function Hero() {
       <BoomerangVideoBg />
       <div className="bhero-copy">
         <div className="hero-coming-soon-wrap" data-rise>
-          <div className="hero-coming-soon-pill" role="status" aria-label="Website coming soon">
+          <div className="hero-coming-soon-pill" role="status" aria-label="Coming soon">
             <span className="hero-pill-dot" aria-hidden="true" />
-            <span>Website Coming Soon</span>
+            <span>Coming Soon</span>
           </div>
         </div>
         <h1 className="bhero-title" id="hero-heading">
