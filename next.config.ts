@@ -1,63 +1,21 @@
 import path from "path";
 import type { NextConfig } from "next";
 
-// Routes live in src/app. A Vercel build of the earlier upload has no app directory and cannot compile.
-
-const isProduction = process.env.NODE_ENV === "production";
-// Headers are captured when `next build` runs. Vercel builds over HTTPS.
-const httpsDeployment =
-  process.env.SECURITY_HTTPS === "true" || process.env.VERCEL === "1";
-
-function contentSecurityPolicy(): string {
-  const scriptSrc = ["'self'", "'unsafe-inline'"];
-  if (!isProduction) scriptSrc.push("'unsafe-eval'");
-
-  const directives = [
-    "default-src 'self'",
-    `script-src ${scriptSrc.join(" ")}`,
-    "style-src 'self' https://fonts.googleapis.com",
-    "style-src-attr 'unsafe-inline'",
-    "img-src 'self'",
-    "font-src 'self' https://fonts.gstatic.com",
-    "media-src 'self' https://d8j0ntlcm91z4.cloudfront.net",
-    "connect-src 'self'",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "frame-src 'none'",
-    "frame-ancestors 'none'",
-    "manifest-src 'self'",
-  ];
-
-  if (httpsDeployment) directives.push("upgrade-insecure-requests");
-  return directives.join("; ");
-}
-
-const securityHeaders = [
-  { key: "X-Content-Type-Options", value: "nosniff" },
-  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "X-Frame-Options", value: "DENY" },
-  {
-    key: "Permissions-Policy",
-    value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()",
-  },
-  { key: "Content-Security-Policy", value: contentSecurityPolicy() },
-];
-
-if (httpsDeployment) {
-  securityHeaders.unshift({
-    key: "Strict-Transport-Security",
-    value: "max-age=63072000; includeSubDomains",
-  });
-}
+// Routes live in src/app. The site is a fully static export (`out/`), served directly by Nginx
+// on the VPS — there is no Node server in production.
+//
+// Static exports cannot send response headers, so the security headers (CSP, HSTS,
+// X-Frame-Options, ...) live in deploy/nginx/cpacontractingllc.com.conf. Keep the two in sync.
+// The enquiry form posts from the browser to the leads API (NEXT_PUBLIC_LEADS_API_URL), which
+// must be allowed in the CSP `connect-src` there.
 
 const nextConfig: NextConfig = {
+  output: "export",
   reactStrictMode: true,
   poweredByHeader: false,
   outputFileTracingRoot: path.join(__dirname),
-  async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
-  },
+  // The default image optimizer needs a server; images are served as-is from /public.
+  images: { unoptimized: true },
 };
 
 export default nextConfig;

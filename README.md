@@ -21,7 +21,7 @@ npm run build
 
 ## Enquiry form
 
-The form is not connected. It stays unavailable until `ENQUIRY_ENDPOINT` is set in the environment to an HTTPS endpoint that returns `{ "accepted": true }` with a success status. No company email is published, and a failed or missing response never shows the accepted message.
+The site is a static export (`output: "export"`); there is no Node server in production. The enquiry form posts from the browser to the CPA leads API (`src/lib/leads.ts`) using `NEXT_PUBLIC_LEADS_API_URL` and `NEXT_PUBLIC_LEADS_SITE_KEY`, read from `.env.production` at build time (not committed). The site key is origin-bound, so the API only accepts it from the site's own domains. Only a `201` response shows the accepted message; if the key is missing, the form opens a prefilled email draft instead. See `deploy/README.md` for deployment.
 
 ## Company Details
 

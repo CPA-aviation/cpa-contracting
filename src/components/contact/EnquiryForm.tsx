@@ -1,15 +1,13 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { submitEnquiry } from "@/app/actions";
 import type { EnquiryResult } from "@/content/enquiry";
 import { copy, emailDisplay, interests, type Interest } from "@/content/site";
+import { leadsConfigured, submitLead } from "@/lib/leads";
 
 export function EnquiryForm({
-  configured = false,
   defaultInterest = "Building Contracting",
 }: {
-  configured?: boolean;
   defaultInterest?: Interest;
 }) {
   const [state, setState] = useState<EnquiryResult>({ status: "idle" });
@@ -17,13 +15,15 @@ export function EnquiryForm({
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const data = new FormData(form);
     const fullName = String(data.get("fullName") ?? "").trim();
     const organisation = String(data.get("organisation") ?? "").trim();
     const email = String(data.get("email") ?? "").trim();
     const phone = String(data.get("phone") ?? "").trim();
     const interest = String(data.get("interest") ?? "") as Interest;
     const message = String(data.get("message") ?? "").trim();
+    const honeypot = String(data.get("website") ?? "");
 
     const invalidFields: string[] = [];
     if (!fullName) invalidFields.push("fullName");
@@ -37,29 +37,10 @@ export function EnquiryForm({
     }
 
     setState({ status: "submitting" });
+    setMailtoHref(null);
 
-    // 1. If backend endpoint is configured, submit to server
-    if (configured) {
-      const result = await submitEnquiry({
-        fullName,
-        organisation,
-        email,
-        phone,
-        interest,
-        message,
-      });
-
-      if (result.status === "accepted") {
-        setState(result);
-        return;
-      }
-      if (result.status === "invalid" || result.status === "rejected") {
-        setState(result);
-        return;
-      }
-    }
-
-    // 2. Direct reliable email dispatch fallback
+    // Email draft with the same details, used when the leads API is not configured
+    // or does not accept the enquiry.
     const subject = encodeURIComponent(`Project Enquiry: ${interest} — ${fullName}`);
     const body = encodeURIComponent(
       `Full Name: ${fullName}\n` +
@@ -71,6 +52,17 @@ export function EnquiryForm({
       `---\nSent via C P A CONTRACTING L.L.C website enquiry form`
     );
     const mailLink = `mailto:${emailDisplay}?subject=${subject}&body=${body}`;
+
+    // 1. Send to the CPA leads API.
+    if (leadsConfigured) {
+      const result = await submitLead({ fullName, organisation, email, phone, interest, message }, honeypot);
+      if (result.status === "accepted") form.reset();
+      if (result.status === "rejected") setMailtoHref(mailLink);
+      setState(result);
+      return;
+    }
+
+    // 2. Leads API not configured in this build: open a prefilled email draft instead.
     setMailtoHref(mailLink);
     window.location.href = mailLink;
     setState({ status: "accepted" });
@@ -150,12 +142,18 @@ export function EnquiryForm({
         multiline
       />
 
+      {/* Honeypot for spam bots: hidden from people and assistive tech, must stay empty. */}
+      <div className="sr-only" aria-hidden="true">
+        <label htmlFor="website">Website</label>
+        <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" defaultValue="" />
+      </div>
+
       {state.status !== "idle" && (
         <div id="enquiry-status" className={noticeClass(state)} role="status">
           <p style={{ margin: 0 }}>{noticeText(state)}</p>
-          {state.status === "accepted" && mailtoHref && (
+          {(state.status === "accepted" || state.status === "rejected") && mailtoHref && (
             <p style={{ margin: "0.5rem 0 0", fontSize: "0.8125rem" }}>
-              Did your email client not open?{" "}
+              {state.status === "rejected" ? "Or send it by email instead:" : "Did your email client not open?"}{" "}
               <a href={mailtoHref} style={{ color: "inherit", textDecoration: "underline", fontWeight: 600 }}>
                 Click here to dispatch directly to {emailDisplay}
               </a>

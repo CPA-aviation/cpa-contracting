@@ -7,8 +7,6 @@ import { pageMetadata } from "@/lib/metadata";
 export const metadata = pageMetadata("Contact", pages.contact.description);
 
 export default function ContactPage() {
-  const configured = Boolean(process.env.ENQUIRY_ENDPOINT);
-
   return (
     <PageShell>
       <div className="contact-split">
@@ -32,7 +30,7 @@ export default function ContactPage() {
         <section className="contact-form-side" aria-label="Enquiry form">
           <div className="contact-form-side-inner">
             <div className="form-card">
-              <EnquiryForm configured={configured} />
+              <EnquiryForm />
             </div>
           </div>
         </section>

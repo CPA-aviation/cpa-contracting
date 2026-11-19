@@ -1,193 +1,124 @@
-# cpacontractingllc.com — VPS Deployment Guide (Nginx + PM2)
+# cpacontractingllc.com — VPS Deployment Guide (Static site + Nginx)
 
 | चीज़ | वैल्यू |
 | --- | --- |
-| OS | Ubuntu 26.04 (KVM4 VPS) |
-| Canonical URL | `https://www.cpacontractingllc.com` (non-www → www redirect) |
-| App folder | `/var/www/cpacontractingllc.com` |
-| Next.js पोर्ट | `127.0.0.1:3001` (सिर्फ localhost, बाहर से सीधा नहीं खुलेगा) |
-| PM2 नाम | `cpa-contracting` |
+| Canonical URL | `https://www.cpacontractingllc.com` (non-www वाला URL www पर redirect होता है) |
+| App folder | `/app/cpa-contracting` |
+| Nginx क्या serve करता है | `/app/cpa-contracting/out` (static HTML/JS/CSS) |
+| Node server / PM2 | **नहीं चाहिए।** साइट पूरी तरह static export है |
+| Enquiry form | Browser से सीधे `https://clp.cpaleasing.com/api/v1/leads` पर जाता है |
 | Nginx फाइल | `/etc/nginx/sites-available/cpacontractingllc.com` |
 
 इस फोल्डर की फाइलें:
 
 - `nginx/cpacontractingllc.com.http-only.conf`: पहला SSL certificate लेने के लिए temporary config
-- `nginx/cpacontractingllc.com.conf`: फाइनल HTTPS config
-- `ecosystem.config.cjs`: PM2 प्रोसेस (पोर्ट 3001)
-- `deploy.sh`: git pull, install, build और PM2 reload करता है। Nginx और SSL को नहीं छूता।
+- `nginx/cpacontractingllc.com.conf`: फाइनल HTTPS config। Static files serve करता है और सारे security headers (CSP, HSTS…) भी देता है
+- `deploy.sh`: git pull करता है, `npm ci` चलाता है, और `next build` से `out/` बनाता है। Nginx और SSL को नहीं छूता
 
-> **Build सर्वर पर ही क्यों?** साइट `next/image` यूज़ करती है, जो `sharp` नाम की native library पर चलती है। Windows पर बनी build Linux पर नहीं चलेगी, इसलिए code git से जाता है और build VPS पर होती है।
-
----
-
-## 0. DNS (डोमेन पैनल में)
-
-| Type | Name | Value |
-| --- | --- | --- |
-| A | `@` | VPS का IPv4 |
-| A | `www` | VPS का IPv4 |
-| AAAA (अगर IPv6 है) | `@` और `www` | VPS का IPv6 |
-
-चेक करें (दोनों में VPS IP आना चाहिए):
-
-```bash
-dig +short cpacontractingllc.com
-dig +short www.cpacontractingllc.com
-```
+सारे commands `root` से चलाने हैं।
 
 ---
 
-## 1. सर्वर की तैयारी (पूरे VPS के लिए एक बार; बाकी 13 साइटों पर दोबारा नहीं करना)
+## Enquiry form (Leads API)
 
-```bash
-sudo apt update && sudo apt -y upgrade
-sudo apt -y install nginx certbot git curl build-essential
+Form का डेटा इस payload के साथ जाता है:
 
-# Firewall
-sudo ufw allow OpenSSH
-sudo ufw allow 'Nginx Full'
-sudo ufw enable
-
-# Node.js 24 LTS
-curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
-sudo apt -y install nodejs
-node -v    # >= 20.9 होना चाहिए
-
-# PM2
-sudo npm install -g pm2
-
-# Deploy user + folders
-sudo adduser --disabled-password --gecos "" deploy
-sudo mkdir -p /var/www/letsencrypt
-sudo chown deploy:deploy /var/www
+```json
+{ "type": "quote", "name": "...", "email": "...", "phone": "...", "message": "...", "website": "" }
 ```
 
-> अगर NodeSource पर Ubuntu 26.04 अभी सपोर्टेड न हो, तो `sudo apt install nodejs npm` करके `node -v` चेक करें। version 20.9 या उससे ऊपर होना चाहिए।
+- Organisation और Interest के लिए API में अलग field नहीं है, इसलिए ये दोनों `message` की शुरुआत में जुड़ जाते हैं।
+- `website` एक honeypot field है। Bots के लिए यह छिपा रहता है, असली visitor के लिए खाली रहता है।
+- API `201` लौटाए तो success माना जाता है। `400` आए तो गलत fields highlight होते हैं। किसी और error पर form "not accepted" का मैसेज और email से भेजने का link दिखाता है।
+- Site key सिर्फ इसी domain के लिए काम करती है (`www.cpacontractingllc.com` और `cpacontractingllc.com`)। किसी और origin से API `403` देता है, इसलिए browser bundle में key रहना ठीक है।
+
+Key और URL **git में नहीं** रखे जाते। VPS पर `/app/cpa-contracting/.env.production` फाइल में डालें:
+
+```bash
+cat > /app/cpa-contracting/.env.production <<'EOF'
+NEXT_PUBLIC_LEADS_API_URL=https://clp.cpaleasing.com/api/v1/leads
+NEXT_PUBLIC_LEADS_SITE_KEY=<यहाँ site key>
+EOF
+```
+
+Next.js यह फाइल build के समय पढ़ता है। इसलिए key बदलें तो `deploy.sh` दोबारा चलाना होगा।
 
 ---
 
-## 2. GitHub एक्सेस (Deploy Key)
+## A. पुराने PM2 setup से migrate करना (एक बार)
 
-Repo: `github.com/CPA-aviation/cpa-contracting`
-
+**1. PM2 वाला Next.js server बंद करें**
 ```bash
-sudo -iu deploy
-ssh-keygen -t ed25519 -C "vps-cpacontracting" -f ~/.ssh/cpa_contracting -N ""
-cat ~/.ssh/cpa_contracting.pub
+pm2 delete cpa-contracting && pm2 save
 ```
 
-इस public key को GitHub पर डालें: **Repo → Settings → Deploy keys → Add key** (read-only)। फिर `~/.ssh/config` में यह जोड़ें:
+**2. `.env.production` बनाएं** (ऊपर वाला command)
 
+**3. Code और build अपडेट करें**
+```bash
+bash /app/cpa-contracting/deploy/deploy.sh
 ```
-Host github-cpa-contracting
-    HostName github.com
-    User git
-    IdentityFile ~/.ssh/cpa_contracting
-    IdentitiesOnly yes
+आखिर में `OK — static site built` आना चाहिए।
+
+**4. नया Nginx config लगाएं**
+```bash
+cp /app/cpa-contracting/deploy/nginx/cpacontractingllc.com.conf /etc/nginx/sites-available/cpacontractingllc.com && nginx -t && systemctl reload nginx
 ```
 
-> हर साइट के लिए अलग deploy key और अलग `Host` alias रखें, क्योंकि GitHub एक key को सिर्फ एक repo पर लगाने देता है।
+**5. Test करें**
+```bash
+curl -sI https://www.cpacontractingllc.com/contact | grep -iE "^HTTP|content-security"
+```
+`HTTP/2 200` आना चाहिए, और CSP में `https://clp.cpaleasing.com` दिखना चाहिए।
+
+> अगर Nginx `403 Forbidden` दे, तो `www-data` user `/app` फोल्डर नहीं पढ़ पा रहा। इसे ठीक करने के लिए:
+> ```bash
+> chmod o+rx /app /app/cpa-contracting
+> ```
 
 ---
 
-## 3. Code clone करें और पहली बार चलाएं (`deploy` user के रूप में)
+## B. नए सर्वर पर पहली बार setup
+
+सर्वर पर पहले से Nginx, certbot, Node 20.9+ और git होने चाहिए।
 
 ```bash
-git clone git@github-cpa-contracting:CPA-aviation/cpa-contracting.git /var/www/cpacontractingllc.com
-bash /var/www/cpacontractingllc.com/deploy/deploy.sh
+git clone https://github.com/CPA-aviation/cpa-contracting.git /app/cpa-contracting
 ```
 
-आखिर में `OK — site is responding` आना चाहिए।
-
-Reboot के बाद PM2 अपने आप चालू हो, इसके लिए (यह एक बार ही करना है):
-
+फिर ये करें:
+1. ऊपर बताए तरीके से `.env.production` बनाएं।
+2. `deploy.sh` चलाएं।
+3. HTTP-only config लगाएं:
 ```bash
-pm2 startup systemd -u deploy --hp /home/deploy
-# यह एक sudo वाली कमांड प्रिंट करेगा। उसे sudo वाले user से चलाएं।
-pm2 save
+mkdir -p /var/www/letsencrypt && cp /app/cpa-contracting/deploy/nginx/cpacontractingllc.com.http-only.conf /etc/nginx/sites-available/cpacontractingllc.com && ln -sf /etc/nginx/sites-available/cpacontractingllc.com /etc/nginx/sites-enabled/ && nginx -t && systemctl reload nginx
 ```
+4. SSL certificate लें:
+```bash
+certbot certonly --webroot -w /var/www/letsencrypt -d cpacontractingllc.com -d www.cpacontractingllc.com --deploy-hook "systemctl reload nginx"
+```
+5. फाइनल config लगाएं। इसके लिए ऊपर वाले section A का step 4 चलाएं।
 
 ---
 
-## 4. Nginx: पहले HTTP-only config (certificate लेने के लिए)
+## आगे के अपडेट
 
 ```bash
-sudo cp /var/www/cpacontractingllc.com/deploy/nginx/cpacontractingllc.com.http-only.conf \
-        /etc/nginx/sites-available/cpacontractingllc.com
-sudo ln -s /etc/nginx/sites-available/cpacontractingllc.com /etc/nginx/sites-enabled/
-sudo rm -f /etc/nginx/sites-enabled/default      # सिर्फ पहली साइट के समय
-sudo nginx -t && sudo systemctl reload nginx
+bash /app/cpa-contracting/deploy/deploy.sh
+```
+
+Nginx को reload करने की ज़रूरत नहीं है, क्योंकि नई files `out/` में आते ही serve होने लगती हैं। Build के दौरान (लगभग 30 सेकंड) `out/` फोल्डर दोबारा बनता है, इसलिए उतनी देर कुछ requests पर 404 आ सकता है।
+
+Error log देखने के लिए:
+```bash
+tail -f /var/log/nginx/cpacontractingllc.com.error.log
 ```
 
 ---
 
-## 5. SSL certificate (Let's Encrypt)
-
-`certonly --webroot` यूज़ करते हैं ताकि certbot आपकी Nginx फाइल को न छेड़े और config पूरी तरह आपके हाथ में रहे।
-
-```bash
-sudo certbot certonly --webroot -w /var/www/letsencrypt \
-  -d cpacontractingllc.com -d www.cpacontractingllc.com \
-  --deploy-hook "systemctl reload nginx"
-```
-
-Renewal अपने आप होगा (`certbot.timer`)। टेस्ट करने के लिए:
-
-```bash
-sudo certbot renew --dry-run
-```
-
----
-
-## 6. Nginx: फाइनल HTTPS config
-
-```bash
-sudo cp /var/www/cpacontractingllc.com/deploy/nginx/cpacontractingllc.com.conf \
-        /etc/nginx/sites-available/cpacontractingllc.com
-sudo nginx -t && sudo systemctl reload nginx
-```
-
-चेक करें:
-
-```bash
-curl -I http://cpacontractingllc.com          # 301 → https://www...
-curl -I https://cpacontractingllc.com         # 301 → https://www...
-curl -I https://www.cpacontractingllc.com     # 200
-```
-
----
-
-## 7. आगे के अपडेट
-
-Code GitHub `main` पर push करने के बाद:
-
-```bash
-sudo -iu deploy bash /var/www/cpacontractingllc.com/deploy/deploy.sh
-```
-
-> Build के दौरान (लगभग 1 मिनट) साइट कुछ पल के लिए error दे सकती है, क्योंकि पुराना प्रोसेस `.next` फोल्डर से चल रहा होता है।
-
-काम की कमांड्स:
-
-```bash
-pm2 status
-pm2 logs cpa-contracting --lines 100
-pm2 restart cpa-contracting
-sudo tail -f /var/log/nginx/cpacontractingllc.com.error.log
-```
-
----
-
-## 8. Contact form (बाद में, जब backend सर्वर बनेगा)
-
-अभी `ENQUIRY_ENDPOINT` सेट नहीं है, इसलिए form "unconfigured" वाला मैसेज दिखाएगा। यह उम्मीद के मुताबिक है। Backend तैयार होने पर `deploy/ecosystem.config.cjs` में `ENQUIRY_ENDPOINT` डालें और `deploy.sh` फिर से चलाएं। Contact page यह वैल्यू build के समय पढ़ता है, इसलिए rebuild ज़रूरी है।
-
----
-
-## 9. पोर्ट रजिस्टर (14 साइटों के लिए)
+## पोर्ट रजिस्टर
 
 | पोर्ट | डोमेन | PM2 नाम |
 | --- | --- | --- |
-| 3001 | www.cpacontractingllc.com | cpa-contracting |
-| 3002 | — | — |
-| 3003 | — | — |
+| — (static) | www.cpacontractingllc.com | — |
+| 3003 | www.cpaleasing.com | cpa-aviation |

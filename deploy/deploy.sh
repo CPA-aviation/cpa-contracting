@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
-# Build and (re)start cpacontractingllc.com on the VPS.
-# Run from anywhere as the deploy user:  bash /var/www/cpacontractingllc.com/deploy/deploy.sh
+# Build cpacontractingllc.com as a static site on the VPS.
+# Run:  bash /app/cpa-contracting/deploy/deploy.sh
+# Nginx serves the result straight from out/ — no Node server, no PM2, no reload needed.
 # Does NOT touch Nginx or SSL — those are managed by hand.
 set -euo pipefail
 
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BRANCH="${BRANCH:-main}"
-PORT=3001
 
 cd "$APP_DIR"
 echo "==> $APP_DIR  (branch: $BRANCH)"
+
+if ! grep -qs '^NEXT_PUBLIC_LEADS_SITE_KEY=.\+' .env.production; then
+  echo "    WARNING: NEXT_PUBLIC_LEADS_SITE_KEY is not set in $APP_DIR/.env.production" >&2
+  echo "             The enquiry form will fall back to opening an email draft." >&2
+fi
 
 echo "==> Pulling latest code"
 git fetch --prune origin
@@ -20,21 +25,13 @@ echo "    now at $(git log -1 --format='%h %s')"
 echo "==> Installing dependencies"
 npm ci --no-audit --no-fund
 
-echo "==> Building"
-# SECURITY_HTTPS=true bakes HSTS + upgrade-insecure-requests into the headers (see next.config.ts).
-NEXT_TELEMETRY_DISABLED=1 SECURITY_HTTPS=true npm run build
+echo "==> Building static export into out/"
+# next build reads NEXT_PUBLIC_* values from .env.production and inlines them.
+NEXT_TELEMETRY_DISABLED=1 npm run build
 
-echo "==> Starting / reloading with PM2"
-pm2 startOrReload deploy/ecosystem.config.cjs --update-env
-pm2 save
-
-echo "==> Health check on 127.0.0.1:$PORT"
-for i in $(seq 1 15); do
-  if curl -fs -o /dev/null "http://127.0.0.1:$PORT/"; then
-    echo "    OK — site is responding"
-    exit 0
-  fi
-  sleep 1
-done
-echo "    FAILED — check: pm2 logs cpa-contracting --lines 100" >&2
-exit 1
+if [ -f out/index.html ] && [ -f out/contact.html ]; then
+  echo "    OK — static site built in $APP_DIR/out"
+else
+  echo "    FAILED — out/index.html or out/contact.html missing" >&2
+  exit 1
+fi
